@@ -33,17 +33,21 @@ const RegistrationForm = ({ onClose }: IProps) => {
     setError('')
 
     try {
-      await registerUser(formData)
-      // Если дошли сюда - значит регистрация успешна и пользователь уже вошел
-      // Форма закроется автоматически после редиректа
-    } catch (error) {
-      // Если это NEXT_REDIRECT - не показываем ошибку, это успех
-      if (error instanceof Error && error.message === 'NEXT_REDIRECT') {
-        onClose() // Закрываем форму перед редиректом
+      const result = await registerUser(formData)
+
+      if (result?.success) {
+        // Регистрация успешна - закрываем форму и обновляем страницу
+        onClose()
+        window.location.href = '/' // Принудительно обновляем страницу
         return
       }
+    } catch (error) {
       // Показываем ошибку пользователю
-      setError(error instanceof Error ? error.message : 'Произошла ошибка при регистрации')
+      setError(
+        error instanceof Error
+          ? error.message
+          : 'Произошла ошибка при регистрации'
+      )
     } finally {
       setIsLoading(false)
     }
@@ -100,9 +104,7 @@ const RegistrationForm = ({ onClose }: IProps) => {
         }}
       />
 
-      {error && (
-        <div className="text-red-500 text-sm mt-2">{error}</div>
-      )}
+      {error && <div className='text-red-500 text-sm mt-2'>{error}</div>}
 
       <div className='flex w-[100%] gap-4 items-center pt-8 justify-end'>
         <Button

@@ -4,7 +4,6 @@ import { IFormData } from '@/types/form.data'
 import { saltAndHashPassword } from '@/utils/password'
 import { prisma } from '@/utils/prisma'
 import { signIn } from '@/auth/auth'
-import { redirect } from 'next/navigation'
 
 export async function registerUser(formData: IFormData) {
   const { email, password, confirmPassword } = formData
@@ -27,6 +26,7 @@ export async function registerUser(formData: IFormData) {
     }
 
     const pwHash = await saltAndHashPassword(password)
+
     const user = await prisma.user.create({
       data: {
         email: email,
@@ -41,10 +41,13 @@ export async function registerUser(formData: IFormData) {
       redirect: false,
     })
 
-    // Перенаправляем на главную страницу
-    redirect('/')
-
+    // Вместо redirect используем возврат успеха
+    return { success: true }
   } catch (error) {
+    // Если это ошибка базы данных или signIn - пробрасываем её дальше
+    if (error instanceof Error) {
+      throw error
+    }
     throw new Error('Ошибка регистрации')
   }
 }
