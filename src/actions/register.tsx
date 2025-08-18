@@ -3,16 +3,18 @@
 import { IFormData } from '@/types/form.data'
 import { saltAndHashPassword } from '@/utils/password'
 import { prisma } from '@/utils/prisma'
+import { signIn } from '@/auth/auth'
+import { redirect } from 'next/navigation'
 
 export async function registerUser(formData: IFormData) {
   const { email, password, confirmPassword } = formData
 
   if (password !== confirmPassword) {
-    return { error: 'Пароли не совпадают' }
+    throw new Error('Пароли не совпадают')
   }
 
   if (password.length < 6) {
-    return { error: 'Пароль должен быть не менее 6 символов' }
+    throw new Error('Пароль должен быть не менее 6 символов')
   }
 
   try {
@@ -21,7 +23,7 @@ export async function registerUser(formData: IFormData) {
     })
 
     if (existingUser) {
-      return { error: 'Пользователь с таким именем уже существует' }
+      throw new Error('Пользователь с таким email уже существует')
     }
 
     const pwHash = await saltAndHashPassword(password)
@@ -32,7 +34,16 @@ export async function registerUser(formData: IFormData) {
       },
     })
 
-    return user
+    // Автоматически входим в систему после регистрации
+    await signIn('credentials', {
+      email,
+      password,
+      redirect: false,
+    })
+
+    // Перенаправляем на главную страницу
+    redirect('/')
+
   } catch (error) {
     throw new Error('Ошибка регистрации')
   }

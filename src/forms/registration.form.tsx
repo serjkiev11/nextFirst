@@ -13,6 +13,8 @@ const RegistrationForm = ({ onClose }: IProps) => {
     password: '',
     confirmPassword: '',
   })
+  const [error, setError] = useState<string>('')
+  const [isLoading, setIsLoading] = useState(false)
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -27,10 +29,24 @@ const RegistrationForm = ({ onClose }: IProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setIsLoading(true)
+    setError('')
 
-    const result = await registerUser(formData)
-
-    onClose()
+    try {
+      await registerUser(formData)
+      // Если дошли сюда - значит регистрация успешна и пользователь уже вошел
+      // Форма закроется автоматически после редиректа
+    } catch (error) {
+      // Если это NEXT_REDIRECT - не показываем ошибку, это успех
+      if (error instanceof Error && error.message === 'NEXT_REDIRECT') {
+        onClose() // Закрываем форму перед редиректом
+        return
+      }
+      // Показываем ошибку пользователю
+      setError(error instanceof Error ? error.message : 'Произошла ошибка при регистрации')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -84,16 +100,22 @@ const RegistrationForm = ({ onClose }: IProps) => {
         }}
       />
 
+      {error && (
+        <div className="text-red-500 text-sm mt-2">{error}</div>
+      )}
+
       <div className='flex w-[100%] gap-4 items-center pt-8 justify-end'>
         <Button
           variant='light'
           onPress={onClose}
+          isDisabled={isLoading}
         >
           Отмена
         </Button>
         <Button
           color='primary'
           type='submit'
+          isLoading={isLoading}
         >
           Зарегистрироваться
         </Button>
