@@ -14,13 +14,17 @@ export async function signOutFunc() {
     // Принудительно очищаем все связанные cookies
     const cookieStore = await cookies()
 
-    // Очищаем только основной NextAuth cookie
+    // Очищаем NextAuth cookies
     cookieStore.delete('authjs.session-token')
+    cookieStore.delete('authjs.callback-url')
+    cookieStore.delete('authjs.csrf-token') // на всякий случай
   } catch (error) {
     // Даже при ошибке очищаем cookies
     try {
       const cookieStore = await cookies()
       cookieStore.delete('authjs.session-token')
+      cookieStore.delete('authjs.callback-url')
+      cookieStore.delete('authjs.csrf-token')
     } catch (cookieError) {
       // Cookie cleanup error - ignore
     }

@@ -20,6 +20,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         secure: process.env.NODE_ENV === 'production',
       },
     },
+    callbackUrl: {
+      name: `authjs.callback-url`,
+      options: {
+        httpOnly: true,
+        sameSite: 'lax', 
+        path: '/',
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 0, // Мгновенно истекает
+      },
+    },
   },
   pages: {
     signIn: '/', // Перенаправляем на главную вместо отдельной страницы входа
