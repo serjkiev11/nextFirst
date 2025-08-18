@@ -34,6 +34,6 @@ export async function registerUser(formData: IFormData) {
 
     return user
   } catch (error) {
-    console.log('Ошибка регистрации', error)
+    throw new Error('Ошибка регистрации')
   }
 }

@@ -37,20 +37,11 @@ export default function Header() {
   const [isRegistrationOpen, setIsRegistrationOpen] = useState(false)
   const [isLoginOpen, setIsLoginOpen] = useState(false)
 
-  console.log(
-    '🔍 Header session:',
-    session ? 'Found' : 'Not found',
-    session?.user?.email,
-    'Status:',
-    status
-  )
-
   const [isSigningOut, setIsSigningOut] = useState(false)
 
   const handleSignOut = async () => {
     try {
       setIsSigningOut(true)
-      console.log('🚪 Starting sign out from header...')
 
       // Вызываем server action для выхода
       await signOutFunc()
@@ -58,7 +49,6 @@ export default function Header() {
       // После успешного выхода принудительно обновляем страницу
       window.location.href = '/'
     } catch (error) {
-      console.log('❌ Sign out error in header:', error)
       setIsSigningOut(false)
       // В случае ошибки тоже обновляем страницу
       window.location.href = '/'

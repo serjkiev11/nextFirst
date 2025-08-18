@@ -47,14 +47,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   callbacks: {
     jwt: ({ token, user }) => {
-      console.log('📍 NextAuth JWT callback:', { token, user })
       if (user) {
         token.id = user.id
       }
       return token
     },
     session: ({ session, token }) => {
-      console.log('📍 NextAuth session callback:', { session, token })
       return {
         ...session,
         user: {
@@ -72,24 +70,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
       authorize: async (credentials) => {
         try {
-          console.log('🔍 Authorize started with:', {
-            email: credentials?.email,
-          })
-
           if (!credentials?.email || !credentials?.password) {
-            console.log('❌ Missing credentials')
             throw new Error('Email и пароль обязательны')
           }
 
           const { email, password } = await signInSchema.parseAsync(credentials)
-          console.log('✅ Schema validation passed')
 
           // logic to verify if the user exists
           const user = await getUserFromDb(email)
-          console.log('👤 User found:', user ? 'Yes' : 'No')
 
           if (!user) {
-            console.log('❌ User not found')
             throw new Error('Неверный ввод данных.')
           }
 
@@ -97,21 +87,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             password,
             user.password
           )
-          console.log('🔐 Password valid:', isPasswordValid)
 
           if (!isPasswordValid) {
-            console.log('❌ Invalid password')
             throw new Error('Неверный ввод данных.')
           }
 
-          console.log('✅ Login successful, returning user data')
           return {
             id: user.id,
             email: user.email,
             name: user.email, // NextAuth ожидает name
           }
         } catch (error) {
-          console.log('🚨 Auth error:', error)
           if (error instanceof ZodError) {
             return null
           }

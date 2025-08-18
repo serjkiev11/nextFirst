@@ -29,11 +29,6 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   const session = await auth()
-  console.log(
-    '🔍 Layout session:',
-    session ? 'Found' : 'Not found',
-    session?.user?.email
-  )
 
   return (
     <html lang='en'>

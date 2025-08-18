@@ -30,7 +30,6 @@ const LoginForm = ({ onClose }: IProps) => {
       } else {
         // Успех - закрываем форму и принудительно обновляем страницу
         onClose()
-        console.log('✅ Login form: Success, refreshing page...')
         // Принудительное обновление для отображения новой сессии
         window.location.href = '/'
       }
@@ -38,11 +37,9 @@ const LoginForm = ({ onClose }: IProps) => {
       // Если это NEXT_REDIRECT - не показываем ошибку, это успех
       if (error instanceof Error && error.message === 'NEXT_REDIRECT') {
         onClose()
-        console.log('✅ Login form: NEXT_REDIRECT caught, refreshing...')
         window.location.href = '/'
         return
       }
-      console.log('❌ Login form error:', error)
       setError('Произошла ошибка при входе')
     } finally {
       setIsLoading(false)
