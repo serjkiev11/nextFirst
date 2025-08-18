@@ -20,15 +20,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         secure: process.env.NODE_ENV === 'production',
       },
     },
-    csrfToken: {
-      name: `authjs.csrf-token`,
-      options: {
-        httpOnly: true,
-        sameSite: 'lax',
-        path: '/',
-        secure: process.env.NODE_ENV === 'production',
-      },
-    },
   },
   pages: {
     signIn: '/', // Перенаправляем на главную вместо отдельной страницы входа
