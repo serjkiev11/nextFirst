@@ -18,7 +18,6 @@ export async function signInWithCredentials(email: string, password: string) {
       throw new Error('Неверные данные для входа')
     }
   } catch (error) {
-
     if (error instanceof Error && error.message === 'NEXT_REDIRECT') {
       throw error // Пропускаем наш редирект дальше
     }

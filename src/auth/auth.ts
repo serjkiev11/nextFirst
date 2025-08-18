@@ -4,11 +4,8 @@ import Credentials from 'next-auth/providers/credentials'
 import bcryptjs from 'bcryptjs'
 import { signInSchema } from '../schema/zod'
 import { getUserFromDb } from '@/utils/user'
-import { PrismaAdapter } from '@auth/prisma-adapter'
-import { prisma } from '@/utils/prisma'
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  adapter: PrismaAdapter(prisma),
   session: {
     strategy: 'jwt',
     maxAge: 30 * 24 * 60 * 60, // 30 дней
@@ -16,15 +13,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   cookies: {
     sessionToken: {
       name: `authjs.session-token`,
-      options: {
-        httpOnly: true,
-        sameSite: 'lax',
-        path: '/',
-        secure: process.env.NODE_ENV === 'production',
-      },
-    },
-    callbackUrl: {
-      name: `authjs.callback-url`,
       options: {
         httpOnly: true,
         sameSite: 'lax',
