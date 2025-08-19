@@ -1,7 +1,7 @@
 'use client'
 
 import { useSession } from 'next-auth/react'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useAuthStore } from '@/store/auth.store'
 
 interface AuthProviderProps {
@@ -11,15 +11,25 @@ interface AuthProviderProps {
 export function AuthProvider({ children }: AuthProviderProps) {
   const { data: session, status } = useSession()
   const setAuthState = useAuthStore((state) => state.setAuthState)
+  const previousStatus = useRef(status)
+  const previousSessionId = useRef(session?.user?.email)
 
   useEffect(() => {
-    // Синхронизируем NextAuth с Zustand store
-    if (status === 'loading') {
-      setAuthState('loading', null)
-    } else if (status === 'authenticated' && session) {
-      setAuthState('authentificated', session)
-    } else {
-      setAuthState('unauthentificated', null)
+    // Синхронизируем только если действительно изменилось состояние
+    const statusChanged = previousStatus.current !== status
+    const sessionChanged = previousSessionId.current !== session?.user?.email
+
+    if (statusChanged || sessionChanged) {
+      if (status === 'loading') {
+        setAuthState('loading', null)
+      } else if (status === 'authenticated' && session) {
+        setAuthState('authentificated', session)
+      } else {
+        setAuthState('unauthentificated', null)
+      }
+
+      previousStatus.current = status
+      previousSessionId.current = session?.user?.email
     }
   }, [status, session, setAuthState])
 

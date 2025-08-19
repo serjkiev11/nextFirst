@@ -11,7 +11,7 @@ import LoginModal from '../modals/login.modal'
 import { HeaderButton } from '../header-button'
 import { useState } from 'react'
 import { signOutFunc } from '@/actions/sign-out'
-import { useAuthStore } from '@/store/auth.store'
+import { useSession } from 'next-auth/react'
 
 export const Logo = () => {
   return (
@@ -32,8 +32,8 @@ export const Logo = () => {
 export default function Header() {
   const pathname = usePathname()
 
-  // Используем Zustand store вместо useSession
-  const { isAuth, session, status } = useAuthStore()
+  // Используем NextAuth напрямую
+  const { data: session, status } = useSession()
 
   const [isRegistrationOpen, setIsRegistrationOpen] = useState(false)
   const [isLoginOpen, setIsLoginOpen] = useState(false)
@@ -91,16 +91,14 @@ export default function Header() {
           <p className='font-bold text-inherit'>{siteConfig.title}</p>
         </Link>
       </NavbarBrand>
-
       <NavbarContent
         className='hidden sm:flex gap-4'
         justify='center'
       >
         {getNavItems()}
       </NavbarContent>
-
       <NavbarContent justify='end'>
-        {isAuth && session ? (
+        {session ? (
           // Показываем если пользователь авторизован
           <>
             <NavbarItem className='hidden lg:flex'>
@@ -136,13 +134,11 @@ export default function Header() {
             </NavbarItem>
           </>
         )}
-      </NavbarContent>
-
+      </NavbarContent>{' '}
       <RegistrationModal
         isOpen={isRegistrationOpen}
         onClose={() => setIsRegistrationOpen(false)}
       />
-
       <LoginModal
         isOpen={isLoginOpen}
         onClose={() => setIsLoginOpen(false)}
