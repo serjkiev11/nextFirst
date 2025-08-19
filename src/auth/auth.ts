@@ -8,7 +8,7 @@ import { getUserFromDb } from '@/utils/user'
 export const { handlers, signIn, signOut, auth } = NextAuth({
   session: {
     strategy: 'jwt',
-    maxAge: 30 * 24 * 60 * 60, // 30 дней
+    maxAge: 7 * 24 * 60 * 60, // 7 дней
   },
   cookies: {
     sessionToken: {
@@ -24,7 +24,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       name: `authjs.callback-url`,
       options: {
         httpOnly: true,
-        sameSite: 'lax', 
+        sameSite: 'lax',
         path: '/',
         secure: process.env.NODE_ENV === 'production',
         maxAge: 0, // Мгновенно истекает

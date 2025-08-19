@@ -2,7 +2,6 @@
 
 import { layoutConfig } from '@/config/layout.config'
 import { siteConfig } from '@/config/site.config'
-import RegistrationForm from '@/forms/registration.form'
 import { Navbar, NavbarBrand, NavbarContent, NavbarItem } from '@heroui/react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -12,7 +11,7 @@ import LoginModal from '../modals/login.modal'
 import { HeaderButton } from '../header-button'
 import { useState } from 'react'
 import { signOutFunc } from '@/actions/sign-out'
-import { useSession } from 'next-auth/react'
+import { useAuthStore } from '@/store/auth.store'
 
 export const Logo = () => {
   return (
@@ -32,11 +31,12 @@ export const Logo = () => {
 
 export default function Header() {
   const pathname = usePathname()
-  const { data: session, status } = useSession()
+
+  // Используем Zustand store вместо useSession
+  const { isAuth, session, status } = useAuthStore()
 
   const [isRegistrationOpen, setIsRegistrationOpen] = useState(false)
   const [isLoginOpen, setIsLoginOpen] = useState(false)
-
   const [isSigningOut, setIsSigningOut] = useState(false)
 
   const handleSignOut = async () => {
@@ -100,7 +100,7 @@ export default function Header() {
       </NavbarContent>
 
       <NavbarContent justify='end'>
-        {session ? (
+        {isAuth && session ? (
           // Показываем если пользователь авторизован
           <>
             <NavbarItem className='hidden lg:flex'>
@@ -109,7 +109,7 @@ export default function Header() {
             <NavbarItem>
               <HeaderButton
                 onClick={handleSignOut}
-                disabled={isSigningOut}
+                disabled={isSigningOut || status === 'loading'}
               >
                 {isSigningOut ? 'Выходим...' : 'Выйти'}
               </HeaderButton>
@@ -119,13 +119,19 @@ export default function Header() {
           // Показываем если пользователь НЕ авторизован
           <>
             <NavbarItem className='hidden lg:flex'>
-              <HeaderButton onClick={() => setIsLoginOpen(true)}>
-                Логин
+              <HeaderButton
+                onClick={() => setIsLoginOpen(true)}
+                disabled={status === 'loading'}
+              >
+                {status === 'loading' ? 'Загрузка...' : 'Логин'}
               </HeaderButton>
             </NavbarItem>
             <NavbarItem>
-              <HeaderButton onClick={() => setIsRegistrationOpen(true)}>
-                Регистрация
+              <HeaderButton
+                onClick={() => setIsRegistrationOpen(true)}
+                disabled={status === 'loading'}
+              >
+                {status === 'loading' ? 'Загрузка...' : 'Регистрация'}
               </HeaderButton>
             </NavbarItem>
           </>
