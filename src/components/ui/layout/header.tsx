@@ -124,10 +124,11 @@ export default function Header() {
         ) : (
           // Показываем если пользователь НЕ авторизован
           <>
-            <NavbarItem className='hidden lg:flex'>
+            <NavbarItem>
               <HeaderButton
                 onClick={() => setIsLoginOpen(true)}
                 disabled={status === 'loading'}
+                className='text-xs sm:text-sm'
               >
                 {status === 'loading' ? 'Загрузка...' : 'Логин'}
               </HeaderButton>
@@ -136,6 +137,7 @@ export default function Header() {
               <HeaderButton
                 onClick={() => setIsRegistrationOpen(true)}
                 disabled={status === 'loading'}
+                className='text-xs sm:text-sm'
               >
                 {status === 'loading' ? 'Загрузка...' : 'Регистрация'}
               </HeaderButton>

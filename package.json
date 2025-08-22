@@ -14,6 +14,7 @@
     "@heroui/react": "^2.8.2",
     "@heroui/theme": "^2.4.20",
     "@prisma/client": "^6.14.0",
+    "@prisma/extension-accelerate": "^2.0.2",
     "bcryptjs": "^3.0.2",
     "dompurify": "^3.2.6",
     "framer-motion": "^12.23.12",
