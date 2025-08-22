@@ -23,9 +23,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       if (status === 'loading') {
         setAuthState('loading', null)
       } else if (status === 'authenticated' && session) {
-        setAuthState('authentificated', session)
+        setAuthState('authenticated', session)
       } else {
-        setAuthState('unauthentificated', null)
+        setAuthState('unauthenticated', null)
       }
 
       previousStatus.current = status

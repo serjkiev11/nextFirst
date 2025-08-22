@@ -34,6 +34,7 @@ export default function Header() {
 
   // Используем NextAuth напрямую
   const { data: session, status } = useSession()
+  const isAuth = !!session?.user
 
   const [isRegistrationOpen, setIsRegistrationOpen] = useState(false)
   const [isLoginOpen, setIsLoginOpen] = useState(false)
@@ -55,25 +56,32 @@ export default function Header() {
     }
   }
   const getNavItems = () => {
-    return siteConfig.navItems.map((item) => {
-      const isActive = pathname === item.href
+    return siteConfig.navItems
+      .filter((item) => {
+        if (item.href === '/ingredients') {
+          return isAuth
+        }
+        return true
+      })
+      .map((item) => {
+        const isActive = pathname === item.href
 
-      return (
-        <NavbarItem key={item.href}>
-          <Link
-            color={'foreground'}
-            href={item.href}
-            className={`px-3 py-1 border border-transparent rounded-md
+        return (
+          <NavbarItem key={item.href}>
+            <Link
+              color={'foreground'}
+              href={item.href}
+              className={`px-3 py-1 border border-transparent rounded-md
                   ${isActive ? 'text-blue-500' : 'text-foreground'}
                   hover:text-blue-500 hover:border-blue-500
                   transition-all duration-100
                   `}
-          >
-            {item.label}
-          </Link>
-        </NavbarItem>
-      )
-    })
+            >
+              {item.label}
+            </Link>
+          </NavbarItem>
+        )
+      })
   }
 
   return (
@@ -107,7 +115,7 @@ export default function Header() {
             <NavbarItem>
               <HeaderButton
                 onClick={handleSignOut}
-                disabled={isSigningOut || status === 'loading'}
+                disabled={isSigningOut}
               >
                 {isSigningOut ? 'Выходим...' : 'Выйти'}
               </HeaderButton>

@@ -1,11 +1,37 @@
 'use client'
 
-import { Button, Card, CardBody } from '@heroui/react'
+import RecipeCard from '@/components/common/recipe-card'
+import { useRecipeStore } from '@/store/recipe.store'
+import { Button } from '@heroui/react'
+import Link from 'next/link'
+import { useEffect } from 'react'
 
 export default function Home() {
+  const { recipes, isLoading, error, loadRecipes } = useRecipeStore()
+
+  useEffect(() => {
+    loadRecipes()
+  }, [loadRecipes])
+
   return (
-    <main className='container mx-auto p-4'>
-      <h1 className='text-4xl font-bold mb-8'>Hello world super</h1>
-    </main>
+    <div className='w-[1024px]'>
+      <>
+        <div className='flex w-full justify-center items-center mb-4'>
+          <Link href='/recipes/new'>
+            <Button color='primary'>Добавить рецепт</Button>
+          </Link>
+        </div>
+        {error && <p className='text-red-500 mb-4'>{error}</p>}
+        {isLoading && <p>Загрузка...</p>}
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+          {recipes.map((recipe) => (
+            <RecipeCard
+              key={recipe.id}
+              recipe={recipe}
+            />
+          ))}
+        </div>
+      </>
+    </div>
   )
 }

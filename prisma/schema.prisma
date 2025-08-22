@@ -16,3 +16,59 @@ model User {
 
   @@map("users")
 }
+
+model Ingredient {
+  id           String   @id @default(uuid())
+  name         String
+  category     Category
+  unit         Unit
+  pricePerUnit Float?
+  description  String?
+
+  createdAt DateTime           @default(now()) @map("created_at")
+  updatedAt DateTime           @updatedAt @map("updated_at")
+  recipes   RecipeIngredient[]
+
+  @@map("ingredients")
+}
+
+enum Category {
+  VEGETABLES
+  FRUITS
+  MEAT
+  DAIRY
+  SPICES
+  OTHER
+}
+
+enum Unit {
+  GRAMS
+  KILOGRAMS
+  LITERS
+  MILLILITERS
+  PIECES
+}
+
+model Recipe {
+  id   String @id @default(uuid())
+  name String
+
+  description String?
+  imageUrl    String?
+  ingredients RecipeIngredient[]
+
+  @@map("recipes")
+}
+
+model RecipeIngredient {
+  id String @id @default(uuid())
+
+  recipe   Recipe @relation(fields: [recipeId], references: [id])
+  recipeId String
+
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+  ingredientId String
+  quantity     Float
+
+  @@map("recipe_ingredient")
+}

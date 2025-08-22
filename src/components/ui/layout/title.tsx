@@ -1,7 +1,6 @@
 'use client'
 
 import { siteConfig } from '@/config/site.config'
-import { div } from 'framer-motion/client'
 import { usePathname } from 'next/navigation'
 
 const Title = () => {
@@ -12,7 +11,7 @@ const Title = () => {
   )
   const pageTitle = currentNavItem ? currentNavItem.label : siteConfig.title
   return (
-    <div className='w-full flex justify-center mt-6 mb-12'>
+    <div className='w-full flex justify-center my-6'>
       <h1 className='text-3xl font-bold'>{pageTitle}</h1>
     </div>
   )
